@@ -27,9 +27,10 @@ public class UserController {
         return users;
     }
 
-    @PostMapping(value="/users/add")
+    @PostMapping(value="/home/register")
     public User addUser(@RequestBody User user){ //requestBody mi "rigonfia" il file JSON
         User newUser = userRepository.save(new User(user.getName(), user.getNameCEO(), user.getEmail(), user.getAddress(), user.getPassword(), user.getPhone()));
+        System.out.println("BUTTA!!!!!!!");
         return newUser;
     }
 
@@ -65,7 +66,7 @@ public class UserController {
         userRepository.deleteById(id);
 
         return new ResponseEntity<>("User has been deleted!", HttpStatus.OK);
-    }
+    }*/
 
     @DeleteMapping("/users/delete")
     public ResponseEntity<String> deleteAllCustomers() {
@@ -74,7 +75,7 @@ public class UserController {
         userRepository.deleteAll();
 
         return new ResponseEntity<>("All users have been deleted!", HttpStatus.OK);
-    }*/
+    }
 
     @GetMapping(value = "users/name/{name}")
     public List<User> findByName(@PathVariable String name) {
