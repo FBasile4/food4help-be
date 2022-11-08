@@ -30,43 +30,43 @@ public class UserController {
     @PostMapping(value="/home/register")
     public User addUser(@RequestBody User user){ //requestBody mi "rigonfia" il file JSON
         User newUser = userRepository.save(new User(user.getName(), user.getNameCEO(), user.getEmail(), user.getAddress(), user.getPassword(), user.getPhone()));
-        System.out.println("BUTTA!!!!!!!");
+        System.out.println("New User create!");
         return newUser;
     }
 
-    @PostMapping(value = "/home/login")
-    public ResponseEntity<String> loginUser(@RequestBody User userIn){
-        List<User> list = new ArrayList<>();
-        userRepository.findAll().forEach(list::add);
-        String check_email = userIn.getEmail();
-        String check_password = userIn.getPassword();
-        String not_auth = "Utente non registrato";
-        for(int i=0; i<list.size(); i++){
-          User userTmp = list.get(i);
-          String emailTmp = userTmp.getEmail();
-          String passwordTmp = userTmp.getPassword();
-          if(emailTmp.equals(check_email)){
-                if(passwordTmp.equals(check_password) && !check_password.equals("")){
-                    String toRet = userTmp.getId()+"";
-                    System.out.println(toRet);
-                    not_auth = toRet;
-                }else{
-                    not_auth = "registrato ma password sbagliata";
-                }
-          }
-          System.out.println("Utente loggato" + not_auth);
+    @GetMapping(value = "/home/login/{userpwd}")
+    public User loginCharity(@PathVariable String userpwd) {
+
+        if(!userpwd.contains("_")) {
+            return null;
         }
-        return new ResponseEntity<>("Utente " + not_auth + " loggato!", HttpStatus.OK );
+
+        String username = userpwd.split("_")[0];
+        String password = userpwd.split("_")[1];
+
+        List<User> charities = userRepository.findByEmail(username);
+        System.out.println(charities);
+        boolean exists = false;
+        User current_user = null;
+
+        for (User ch : charities) {
+            if(ch.getEmail().equals(username)){
+                exists = true;
+                current_user = ch;
+                if(!ch.getPassword().equals(password))
+                    exists = false;
+                break;
+            }
+        }
+
+        if(exists) {
+            System.out.println("ci sono utenti");
+            return current_user;
+        }else {
+            System.out.println("NON CI sono utenti");
+            return null;
+        }
     }
-
-    /*@DeleteMapping("/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable("id") long id) {
-        System.out.println("Delete User with ID = " + id + "...");
-
-        userRepository.deleteById(id);
-
-        return new ResponseEntity<>("User has been deleted!", HttpStatus.OK);
-    }*/
 
     @DeleteMapping("/users/delete")
     public ResponseEntity<String> deleteAllCustomers() {
@@ -79,9 +79,18 @@ public class UserController {
 
     @GetMapping(value = "users/name/{name}")
     public List<User> findByName(@PathVariable String name) {
-
         List<User> userSpecific = userRepository.findByName(name);
+
+            return userSpecific;
+
+    }
+
+    @GetMapping(value = "users/email/{email}")
+    public List<User> findByEmail(@PathVariable String email) {
+        List<User> userSpecific = userRepository.findByEmail(email);
         return userSpecific;
     }
+
+
 
 }
