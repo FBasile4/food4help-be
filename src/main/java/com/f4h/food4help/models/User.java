@@ -7,9 +7,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity
+@MappedSuperclass
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // mi carica i dati nel db man mano che inseriti
-@Table(name = "users")
+//@Table(name = "users")
 public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -25,11 +25,13 @@ public class User{
 
     private String password;
 
+
     private String phone;
 
     public User(){
     }
-    public User(String name, String nameCEO, String email, String address, String password, String phone) {
+    public User(long id, String name, String nameCEO, String email, String address, String password, String phone) {
+        this.id = id;
         this.name = name;
         this.nameCEO = nameCEO;
         this.email = email;
