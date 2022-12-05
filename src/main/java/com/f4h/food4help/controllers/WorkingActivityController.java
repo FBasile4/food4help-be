@@ -50,7 +50,7 @@ public class WorkingActivityController {
 
     @PostMapping(value="/home/workingActivity/create")
     public WorkingActivity addUserWorkingActivity(@RequestBody WorkingActivity user){ //requestBody mi "rigonfia" il file JSON
-        WorkingActivity newUser = userWorkingRepository.save(new WorkingActivity(user.getId(), user.getName(), user.getNameCEO(), user.getEmail(), user.getAddress(), user.getPassword(), user.getPhone()));
+        WorkingActivity newUser = userWorkingRepository.save(new WorkingActivity(user.getId(), user.getName(), user.getNameCEO(), user.getEmail(), user.getAddress(), user.getPassword(), user.getPhone(), user.getClientId()));
         System.out.println("New User create!");
         return newUser;
     }
@@ -81,6 +81,30 @@ public class WorkingActivityController {
         }
         System.out.println("Ci sono utentiii");
         return users;
+    }
+
+    @GetMapping(value = "/workingactivity/login/google/{clientid}")
+    public WorkingActivity loginGoogle(@PathVariable String clientid) {
+
+        List<WorkingActivity> wactivities = new ArrayList<>();
+        userWorkingRepository.findAll().forEach(wactivities::add);
+
+        boolean exists = false;
+        WorkingActivity current_user = null;
+
+
+        for (WorkingActivity wa : wactivities) {
+            if(wa.getClientId().equals(clientid)){
+                exists = true;
+                current_user = wa;
+                break;
+            }
+        }
+
+        if(exists)
+            return current_user;
+        else
+            return null;
     }
 
 

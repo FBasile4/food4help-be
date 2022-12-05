@@ -5,6 +5,7 @@ import com.f4h.food4help.repositories.CharityCompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.Column;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,9 +51,10 @@ public class CharityCompanyController {
         }
     }
 
+    @Column(columnDefinition = "text")
     @PostMapping(value="/home/charity/create")
     public CharityCompany addUserCharity(@RequestBody CharityCompany user){ //requestBody mi "rigonfia" il file JSON
-        CharityCompany newUser = userCharityRepository.save(new CharityCompany(user.getId(), user.getName(), user.getNameCEO(), user.getEmail(), user.getAddress(), user.getPassword(), user.getPhone()));
+        CharityCompany newUser = userCharityRepository.save(new CharityCompany(user.getId(), user.getName(), user.getNameCEO(), user.getEmail(), user.getAddress(), user.getPassword(), user.getPhone(), user.getClientId()));
         System.out.println("New User create!");
         return newUser;
     }
@@ -83,6 +85,34 @@ public class CharityCompanyController {
         }
         System.out.println("Ci sono utentiii");
         return users;
+    }
+
+    @GetMapping(value = "/charity/login/google/{clientid}")
+    public CharityCompany loginGoogle(@PathVariable String clientid) {
+
+        List<CharityCompany> charities = new ArrayList<>();
+        userCharityRepository.findAll().forEach(charities::add);
+        System.out.println(charities);
+
+        boolean exists = false;
+        CharityCompany current_user = null;
+
+
+        for (CharityCompany ch : charities) {
+            if(ch.getClientId().equals(clientid)){
+                exists = true;
+                current_user = ch;
+                break;
+            }
+        }
+
+        if(exists) {
+            System.out.println("Ciao mi sono loggato con GOOGLE");
+            return current_user;
+        }else{
+            System.out.println("Non sono riuscito a loggarmi con google");
+            return null;
+        }
     }
 
 

@@ -9,28 +9,39 @@ import javax.persistence.Id;
 
 @MappedSuperclass
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // mi carica i dati nel db man mano che inseriti
-//@Table(name = "users")
+@Table(name = "charities")
 public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 
+    @Column(name="id")
     private long id;
+
+    @Column(name="name")
     private String name;
 
+    @Column(name="nameCEO")
     private String nameCEO;
 
+    @Column(name="email")
     private String email;
 
+    @Column(name="address")
     private String address;
 
+    @Column(name="password")
     private String password;
 
-
+    @Column(name="phone")
     private String phone;
+
+    //@Column(name="clientId", columnDefinition="text",  length=20485760)
+    @Lob
+    private String clientId;
 
     public User(){
     }
-    public User(long id, String name, String nameCEO, String email, String address, String password, String phone) {
+    public User(long id, String name, String nameCEO, String email, String address, String password, String phone, String clientId) {
         this.id = id;
         this.name = name;
         this.nameCEO = nameCEO;
@@ -38,6 +49,7 @@ public class User{
         this.address = address;
         this.password = password;
         this.phone = phone;
+        this.clientId = clientId;
     }
 
     public long getId() {
@@ -89,5 +101,13 @@ public class User{
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 }
